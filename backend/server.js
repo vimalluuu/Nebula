@@ -84,6 +84,7 @@ const auditRoutes = require('./routes/audit.routes')(blockchain);
 const notificationRoutes = require('./routes/notification.routes')(blockchain);
 const vendorRoutes = require('./routes/vendor.routes')(blockchain);
 const paymentRoutes = require('./routes/payment.routes')(blockchain);
+const fileRoutes = require('./routes/file.routes')(blockchain);
 
 // Public read-only routes (no auth) - Must come BEFORE protected routes
 app.use('/api/public/tenders', tenderRoutes);
@@ -98,6 +99,7 @@ app.use('/api/audit', authenticateToken, auditRoutes);
 app.use('/api/notifications', authenticateToken, notificationRoutes);
 app.use('/api/vendors', authenticateToken, vendorRoutes);
 app.use('/api/payments', authenticateToken, paymentRoutes);
+app.use('/api/files', authenticateToken, fileRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {

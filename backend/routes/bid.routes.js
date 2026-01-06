@@ -7,7 +7,7 @@ module.exports = (blockchain) => {
     // Submit bid
     router.post('/', async (req, res) => {
         try {
-            const { tenderId, amount, proposal, timeline } = req.body;
+            const { tenderId, amount, proposal, timeline, fileUrl, fileName, fileType } = req.body;
 
             if (!tenderId || !amount || !proposal) {
                 return res.status(400).json({ error: 'Missing required fields' });
@@ -25,6 +25,9 @@ module.exports = (blockchain) => {
                 amount,
                 proposal,
                 timeline,
+                fileUrl: fileUrl || null,
+                fileName: fileName || null,
+                fileType: fileType || null,
                 vendorEmail: req.user.email,
                 vendorName: req.user.name,
                 status: 'SUBMITTED',

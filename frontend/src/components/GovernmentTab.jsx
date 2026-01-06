@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { tenderAPI, bidAPI, contractAPI, auditAPI } from '../api';
 import BidChart from './BidChart';
+import FileUpload from './FileUpload';
 
 function GovernmentTab({ user }) {
     const [tenders, setTenders] = useState([]);
@@ -17,7 +18,10 @@ function GovernmentTab({ user }) {
         description: '',
         budget: '',
         deadline: '',
-        requirements: ''
+        requirements: '',
+        fileUrl: '',
+        fileName: '',
+        fileType: ''
     });
 
     useEffect(() => {
@@ -45,7 +49,16 @@ function GovernmentTab({ user }) {
             });
 
             setMessage({ type: 'success', text: 'Tender created successfully and added to blockchain!' });
-            setFormData({ title: '', description: '', budget: '', deadline: '', requirements: '' });
+            setFormData({
+                title: '',
+                description: '',
+                budget: '',
+                deadline: '',
+                requirements: '',
+                fileUrl: '',
+                fileName: '',
+                fileType: ''
+            });
             setShowCreateForm(false);
             loadTenders();
         } catch (error) {
@@ -166,6 +179,28 @@ function GovernmentTab({ user }) {
                                 rows="2"
                             />
                         </div>
+
+                        <FileUpload
+                            label="Tender Document / Specification"
+                            uploadType="tender"
+                            onFileUploaded={(fileData) => {
+                                if (fileData) {
+                                    setFormData({
+                                        ...formData,
+                                        fileUrl: fileData.fileUrl,
+                                        fileName: fileData.fileName,
+                                        fileType: fileData.fileType
+                                    });
+                                } else {
+                                    setFormData({
+                                        ...formData,
+                                        fileUrl: '',
+                                        fileName: '',
+                                        fileType: ''
+                                    });
+                                }
+                            }}
+                        />
 
                         <button type="submit" className="btn-primary" disabled={loading}>
                             {loading ? 'Creating...' : 'Create Tender'}
@@ -321,6 +356,24 @@ function GovernmentTab({ user }) {
                                         <span className={`badge ${tender.status.toLowerCase()}`}>{tender.status}</span>
                                     </h3>
                                     <p>{tender.description}</p>
+                                    {tender.fileUrl && (
+                                        <p style={{ marginTop: '0.5rem' }}>
+                                            <a
+                                                href={tender.fileUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    color: '#2563EB',
+                                                    textDecoration: 'none',
+                                                    fontWeight: '500'
+                                                }}
+                                            >
+                                                📄 View Tender Document ({tender.fileName})
+                                            </a>
+                                        </p>
+                                    )}
                                     <p><strong>Budget:</strong> ₹{tender.budget.toLocaleString()}</p>
                                     <p><strong>Deadline:</strong> {tender.deadline}</p>
                                     <p style={{ fontSize: '12px', color: '#666' }}>

@@ -6,7 +6,7 @@ module.exports = (blockchain) => {
     // Create tender
     router.post('/', (req, res) => {
         try {
-            const { title, description, budget, deadline, requirements } = req.body;
+            const { title, description, budget, deadline, requirements, fileUrl, fileName, fileType } = req.body;
 
             if (!title || !budget || !deadline) {
                 return res.status(400).json({ error: 'Missing required fields' });
@@ -19,6 +19,9 @@ module.exports = (blockchain) => {
                 budget,
                 deadline,
                 requirements,
+                fileUrl: fileUrl || null,
+                fileName: fileName || null,
+                fileType: fileType || null,
                 status: 'OPEN',
                 createdBy: req.user.email,
                 createdAt: new Date().toISOString()

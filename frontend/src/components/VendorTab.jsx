@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { tenderAPI, bidAPI, contractAPI, vendorAPI, paymentAPI } from '../api';
 import VendorRegistration from './VendorRegistration';
+import FileUpload from './FileUpload';
 
 function VendorTab({ user }) {
     const [tenders, setTenders] = useState([]);
@@ -19,7 +20,10 @@ function VendorTab({ user }) {
     const [bidForm, setBidForm] = useState({
         amount: '',
         proposal: '',
-        timeline: ''
+        timeline: '',
+        fileUrl: '',
+        fileName: '',
+        fileType: ''
     });
 
     useEffect(() => {
@@ -107,7 +111,14 @@ function VendorTab({ user }) {
             }
 
             setMessage({ type: 'success', text: messageText });
-            setBidForm({ amount: '', proposal: '', timeline: '' });
+            setBidForm({
+                amount: '',
+                proposal: '',
+                timeline: '',
+                fileUrl: '',
+                fileName: '',
+                fileType: ''
+            });
             setShowBidForm(false);
             setSelectedTender(null);
             loadTenders();
@@ -386,6 +397,28 @@ function VendorTab({ user }) {
                             />
                         </div>
 
+                        <FileUpload
+                            label="Attach Proposal Document"
+                            uploadType="bid"
+                            onFileUploaded={(fileData) => {
+                                if (fileData) {
+                                    setBidForm({
+                                        ...bidForm,
+                                        fileUrl: fileData.fileUrl,
+                                        fileName: fileData.fileName,
+                                        fileType: fileData.fileType
+                                    });
+                                } else {
+                                    setBidForm({
+                                        ...bidForm,
+                                        fileUrl: '',
+                                        fileName: '',
+                                        fileType: ''
+                                    });
+                                }
+                            }}
+                        />
+
                         <div style={{ display: 'flex', gap: '10px' }}>
                             <button type="submit" className="btn-primary" disabled={loading}>
                                 {loading ? 'Submitting...' : 'Submit Bid'}
@@ -422,6 +455,25 @@ function VendorTab({ user }) {
                                 <p><strong>Budget:</strong> ₹{tender.budget.toLocaleString()}</p>
                                 <p><strong>Deadline:</strong> {tender.deadline}</p>
                                 {tender.requirements && <p><strong>Requirements:</strong> {tender.requirements}</p>}
+
+                                {tender.fileUrl && (
+                                    <p style={{ marginTop: '0.5rem' }}>
+                                        <a
+                                            href={tender.fileUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                color: '#2563EB',
+                                                textDecoration: 'none',
+                                                fontWeight: '500'
+                                            }}
+                                        >
+                                            📄 Download Tender Document ({tender.fileName})
+                                        </a>
+                                    </p>
+                                )}
 
                                 {/* Show bid details if already submitted */}
                                 {alreadyBid && myBid && (
