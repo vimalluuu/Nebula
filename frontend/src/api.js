@@ -34,7 +34,7 @@ api.interceptors.response.use(
 
 export const authAPI = {
     login: (email, password) => axios.post(`${API_URL}/auth/login`, { email, password }),
-    register: (vendorData) => axios.post(`${API_URL}/vendors/register`, vendorData),
+    register: (vendorData) => axios.post(`${API_URL}/auth/register`, vendorData),
 };
 
 export const tenderAPI = {

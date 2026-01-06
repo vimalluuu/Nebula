@@ -63,4 +63,54 @@ const login = (req, res) => {
     });
 };
 
-module.exports = { authenticateToken, login, DEMO_USERS };
+const register = (req, res) => {
+    const { email, password, companyName, ...otherDetails } = req.body;
+
+    // Check if user already exists in DEMO_USERS
+    if (DEMO_USERS[email]) {
+        return res.status(400).json({ error: 'User already exists' });
+    }
+
+    const { findVendorByEmail, addVendor } = require('../utils/storage');
+
+    // Check if vendor already exists in storage
+    if (findVendorByEmail(email)) {
+        return res.status(400).json({ error: 'User already exists' });
+    }
+
+    // Create new vendor
+    const newVendor = {
+        email,
+        password,
+        companyName,
+        role: 'vendor',
+        mspId: 'VendorsMSP',
+        name: companyName, // Use company name as display name
+        ...otherDetails,
+        registeredAt: new Date().toISOString()
+    };
+
+    if (addVendor(newVendor)) {
+        // Generate token
+        const token = jwt.sign(
+            { email, role: 'vendor', mspId: 'VendorsMSP', name: companyName },
+            process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
+            { expiresIn: '7d' }
+        );
+
+        res.status(201).json({
+            message: 'Registration successful',
+            token,
+            user: {
+                email,
+                role: 'vendor',
+                mspId: 'VendorsMSP',
+                name: companyName
+            }
+        });
+    } else {
+        res.status(500).json({ error: 'Failed to register vendor' });
+    }
+};
+
+module.exports = { authenticateToken, login, register, DEMO_USERS };
