@@ -49,6 +49,35 @@ module.exports = (blockchain) => {
                 console.warn('AI service unavailable:', aiError.message);
             }
 
+            // 🔔 CREATE NOTIFICATION FOR AUDITORS
+            try {
+                const notificationStorage = require('../utils/notification-storage');
+                // Get all auditors from blockchain (users with role 'auditor')
+                // For now, we'll use a hardcoded auditor email - in production, query user database
+                const auditorEmail = 'auditor@demo.com';
+
+                notificationStorage.createNotification({
+                    id: uuidv4(),
+                    userId: auditorEmail,
+                    type: 'NEW_BID',
+                    title: `📋 New Bid Submitted: ${tenderBlock.data.title}`,
+                    message: `A new bid has been submitted by ${req.user.name} for tender "${tenderBlock.data.title}" worth ₹${amount.toLocaleString()}`,
+                    data: {
+                        bidId: bid.id,
+                        tenderId,
+                        tenderTitle: tenderBlock.data.title,
+                        bidAmount: amount,
+                        vendorName: req.user.name,
+                        submittedAt: bid.submittedAt
+                    },
+                    read: false,
+                    createdAt: new Date().toISOString()
+                });
+            } catch (notifError) {
+                console.error('Failed to create notification:', notifError);
+                // Don't fail the bid submission if notification fails
+            }
+
             res.status(201).json({
                 message: 'Bid submitted successfully',
                 bid,

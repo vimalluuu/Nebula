@@ -6,6 +6,7 @@ import VendorTab from './components/VendorTab';
 import AuditorTab from './components/AuditorTab';
 import PublicTab from './components/PublicTab';
 import PaymentManagement from './components/PaymentManagement';
+import NotificationBell from './components/NotificationBell';
 
 function App() {
     const [user, setUser] = useState(null);
@@ -92,6 +93,7 @@ function App() {
                     </div>
 
                     <div className="user-section">
+                        <NotificationBell user={user} />
                         <div className="user-info">
                             <span className="user-badge">{user.role.toUpperCase()}</span>
                             <span className="user-name">{user.name}</span>

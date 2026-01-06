@@ -98,6 +98,30 @@ module.exports = (blockchain) => {
             // Update tender status
             tenderBlock.data.status = 'AWARDED';
 
+            // 🔔 CREATE NOTIFICATION FOR VENDOR
+            try {
+                const notificationStorage = require('../utils/notification-storage');
+                notificationStorage.createNotification({
+                    id: uuidv4(),
+                    userId: bidBlock.data.vendorEmail,
+                    type: 'CONTRACT_AWARDED',
+                    title: `🎉 Contract Awarded: ${tenderBlock.data.title}`,
+                    message: `Congratulations! You have been awarded the contract for "${tenderBlock.data.title}" worth ₹${bidBlock.data.amount.toLocaleString()}`,
+                    data: {
+                        contractId: contract.id,
+                        tenderId,
+                        tenderTitle: tenderBlock.data.title,
+                        contractValue: bidBlock.data.amount,
+                        awardedAt: contract.awardedAt
+                    },
+                    read: false,
+                    createdAt: new Date().toISOString()
+                });
+            } catch (notifError) {
+                console.error('Failed to create notification:', notifError);
+                // Don't fail the contract award if notification fails
+            }
+
             res.status(201).json({
                 message: 'Contract awarded successfully',
                 contract,
