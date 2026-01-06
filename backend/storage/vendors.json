@@ -1,0 +1,34 @@
+[
+  {
+    "id": "2a7b561e-a58b-4181-b20a-5494b54087b2",
+    "companyName": "ABC",
+    "registrationNumber": "99999999",
+    "email": "VIMALLU@GMAIL.COM",
+    "password": "123456",
+    "contactPerson": "JSHGDJHAGJDHGASJ",
+    "phone": "686768686",
+    "address": "",
+    "city": "",
+    "state": "",
+    "pincode": "",
+    "status": "PENDING_APPROVAL",
+    "createdAt": "2026-01-05T15:06:11.294Z",
+    "approvedAt": null
+  },
+  {
+    "id": "945a8bbc-9cc5-40cd-8478-bdc33cabb6db",
+    "companyName": "l&t",
+    "registrationNumber": "768768768",
+    "email": "vendor2@demo.com",
+    "password": "123456",
+    "contactPerson": "vim",
+    "phone": "+918637606133",
+    "address": "9/201,PERIYAR STREET,PERIYAVINJIYAM PAKKAM\nSINGAPERUMAL KOVIL, CHENGALPATTU DISTRICT",
+    "city": "CHENNAI",
+    "state": "Tamil Nadu",
+    "pincode": "603204",
+    "status": "PENDING_APPROVAL",
+    "createdAt": "2026-01-06T01:08:56.968Z",
+    "approvedAt": null
+  }
+]

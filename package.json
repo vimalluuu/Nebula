@@ -1,0 +1,28 @@
+{
+  "name": "procurement-monitoring-system",
+  "version": "1.0.0",
+  "description": "Corruption-Resistant Public Procurement Monitoring System - 24h Hackathon Prototype",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "ai-service"
+  ],
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../ai-service && pip install -r requirements.txt",
+    "dev:backend": "cd backend && npm start",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:ai": "cd ai-service && python app.py",
+    "seed": "cd backend && node seed.js"
+  },
+  "keywords": [
+    "blockchain",
+    "procurement",
+    "transparency",
+    "SDG-16",
+    "SDG-17",
+    "anti-corruption"
+  ],
+  "author": "",
+  "license": "MIT"
+}
