@@ -25,6 +25,7 @@ function VendorTab({ user }) {
     useEffect(() => {
         loadVendorProfile();
         loadTenders();
+        loadPayments(); // Load payment history
     }, []);
 
     const loadVendorProfile = async () => {
@@ -271,6 +272,78 @@ function VendorTab({ user }) {
                                     <strong>📋 Your Proposal:</strong> {contract.winningBid.proposal}
                                 </p>
                             </div>
+
+                            {/* Payment Information */}
+                            {(() => {
+                                const contractPayments = payments.filter(p => p.contractId === contract.id);
+                                const totalPaid = contractPayments.reduce((sum, p) => sum + p.amount, 0);
+                                const remaining = contract.winningBid.amount - totalPaid;
+
+                                return (
+                                    <div style={{
+                                        padding: '1rem',
+                                        background: '#FEF3C7',
+                                        borderRadius: '0.5rem',
+                                        border: '2px solid #F59E0B',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        <h4 style={{ margin: '0 0 0.75rem 0', color: '#92400E', fontSize: '1rem' }}>
+                                            💰 Payment Status
+                                        </h4>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                                            <div>
+                                                <p style={{ margin: 0, fontSize: '0.75rem', color: '#78350F' }}>Total Received</p>
+                                                <p style={{ margin: '0.25rem 0 0 0', fontSize: '1.125rem', fontWeight: '700', color: '#059669' }}>
+                                                    ₹{totalPaid.toLocaleString()}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p style={{ margin: 0, fontSize: '0.75rem', color: '#78350F' }}>Remaining</p>
+                                                <p style={{ margin: '0.25rem 0 0 0', fontSize: '1.125rem', fontWeight: '700', color: '#DC2626' }}>
+                                                    ₹{remaining.toLocaleString()}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p style={{ margin: 0, fontSize: '0.75rem', color: '#78350F' }}>Payments</p>
+                                                <p style={{ margin: '0.25rem 0 0 0', fontSize: '1.125rem', fontWeight: '700', color: '#1F2937' }}>
+                                                    {contractPayments.length}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {contractPayments.length > 0 && (
+                                            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #F59E0B' }}>
+                                                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.875rem', fontWeight: '600', color: '#92400E' }}>
+                                                    Recent Payments:
+                                                </p>
+                                                {contractPayments.slice(0, 3).map(payment => (
+                                                    <div key={payment.id} style={{
+                                                        padding: '0.5rem',
+                                                        background: 'white',
+                                                        borderRadius: '0.25rem',
+                                                        marginBottom: '0.5rem',
+                                                        display: 'flex',
+                                                        justifyContent: 'space-between',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                        <div>
+                                                            <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '600' }}>
+                                                                {payment.milestone}
+                                                            </p>
+                                                            <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.75rem', color: '#6B7280' }}>
+                                                                {new Date(payment.disbursedAt).toLocaleDateString()}
+                                                            </p>
+                                                        </div>
+                                                        <p style={{ margin: 0, fontSize: '1rem', fontWeight: '700', color: '#059669' }}>
+                                                            ₹{payment.amount.toLocaleString()}
+                                                        </p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })()}
 
                             <p style={{
                                 marginTop: '1rem',
