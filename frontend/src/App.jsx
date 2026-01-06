@@ -5,6 +5,7 @@ import GovernmentTab from './components/GovernmentTab';
 import VendorTab from './components/VendorTab';
 import AuditorTab from './components/AuditorTab';
 import PublicTab from './components/PublicTab';
+import PaymentManagement from './components/PaymentManagement';
 
 function App() {
     const [user, setUser] = useState(null);
@@ -104,12 +105,20 @@ function App() {
 
             <div className="tabs">
                 {user.role === 'government' && (
-                    <button
-                        className={`tab ${activeTab === 'government' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('government')}
-                    >
-                        🏛️ Government
-                    </button>
+                    <>
+                        <button
+                            className={`tab ${activeTab === 'government' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('government')}
+                        >
+                            🏛️ Tenders & Contracts
+                        </button>
+                        <button
+                            className={`tab ${activeTab === 'payments' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('payments')}
+                        >
+                            💰 Payments
+                        </button>
+                    </>
                 )}
 
                 {user.role === 'vendor' && (
@@ -141,6 +150,7 @@ function App() {
 
             <div className="dashboard-content">
                 {activeTab === 'government' && <GovernmentTab user={user} />}
+                {activeTab === 'payments' && <PaymentManagement user={user} />}
                 {activeTab === 'vendor' && <VendorTab user={user} />}
                 {activeTab === 'auditor' && <AuditorTab user={user} />}
                 {activeTab === 'blockchain' && <AuditorTab user={user} showBlockchain={true} />}

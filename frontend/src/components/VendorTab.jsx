@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { tenderAPI, bidAPI, contractAPI } from '../api';
+import { tenderAPI, bidAPI, contractAPI, vendorAPI, paymentAPI } from '../api';
+import VendorRegistration from './VendorRegistration';
 
 function VendorTab({ user }) {
     const [tenders, setTenders] = useState([]);
@@ -10,6 +11,10 @@ function VendorTab({ user }) {
     const [message, setMessage] = useState(null);
     const [expandedTender, setExpandedTender] = useState(null); // For showing bid details
     const [myContracts, setMyContracts] = useState([]); // Awarded contracts
+    const [vendorProfile, setVendorProfile] = useState(null);
+    const [showRegistration, setShowRegistration] = useState(false);
+    const [payments, setPayments] = useState([]);
+    const [totalReceived, setTotalReceived] = useState(0);
 
     const [bidForm, setBidForm] = useState({
         amount: '',
@@ -18,9 +23,29 @@ function VendorTab({ user }) {
     });
 
     useEffect(() => {
+        loadVendorProfile();
         loadTenders();
     }, []);
 
+    const loadVendorProfile = async () => {
+        try {
+            const response = await vendorAPI.getProfile(user.email);
+            setVendorProfile(response.data.vendor);
+        } catch (error) {
+            console.log('Vendor not registered yet');
+            setShowRegistration(true);
+        }
+    };
+
+    const loadPayments = async () => {
+        try {
+            const response = await paymentAPI.getByVendor(user.email);
+            setPayments(response.data.payments);
+            setTotalReceived(response.data.totalReceived);
+        } catch (error) {
+            console.error('Error loading payments:', error);
+        }
+    };
     const loadTenders = async () => {
         try {
             const response = await tenderAPI.getAll();
@@ -95,6 +120,67 @@ function VendorTab({ user }) {
 
             {message && (
                 <div className={`alert ${message.type}`}>{message.text}</div>
+            )}
+
+            {/* Vendor Registration Prompt */}
+            {showRegistration && !vendorProfile && (
+                <div style={{ marginBottom: '2rem' }}>
+                    <div className="alert warning" style={{ marginBottom: '1.5rem' }}>
+                        <strong>⚠️ Profile Not Complete</strong><br />
+                        Please register your vendor profile to participate in tenders and track your performance.
+                    </div>
+                    <VendorRegistration
+                        user={user}
+                        onRegistrationComplete={(profile) => {
+                            setVendorProfile(profile);
+                            setShowRegistration(false);
+                            setMessage({ type: 'success', text: 'Profile registered successfully!' });
+                        }}
+                    />
+                </div>
+            )}
+
+            {/* Vendor Profile Summary */}
+            {vendorProfile && (
+                <div className="card" style={{
+                    marginBottom: '2rem',
+                    background: 'linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%)',
+                    border: '2px solid var(--primary)'
+                }}>
+                    <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                        <span>👤</span> Vendor Profile
+                    </h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                        <div>
+                            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6B7280' }}>Company</p>
+                            <p style={{ margin: '0.25rem 0 0 0', fontSize: '1.125rem', fontWeight: '600' }}>
+                                {vendorProfile.companyName}
+                            </p>
+                        </div>
+                        <div>
+                            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6B7280' }}>Category</p>
+                            <p style={{ margin: '0.25rem 0 0 0', fontSize: '1.125rem', fontWeight: '600' }}>
+                                {vendorProfile.category}
+                            </p>
+                        </div>
+                        <div>
+                            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6B7280' }}>Win Rate</p>
+                            <p style={{ margin: '0.25rem 0 0 0', fontSize: '1.125rem', fontWeight: '600', color: '#059669' }}>
+                                {vendorProfile.totalBids > 0
+                                    ? `${((vendorProfile.wonContracts / vendorProfile.totalBids) * 100).toFixed(1)}%`
+                                    : 'N/A'}
+                            </p>
+                        </div>
+                        <div>
+                            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6B7280' }}>Average Rating</p>
+                            <p style={{ margin: '0.25rem 0 0 0', fontSize: '1.125rem', fontWeight: '600', color: '#F59E0B' }}>
+                                {vendorProfile.averageRating > 0
+                                    ? `⭐ ${vendorProfile.averageRating.toFixed(1)}/5`
+                                    : 'Not rated yet'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             )}
 
             <div className="grid">
