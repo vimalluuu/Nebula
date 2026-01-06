@@ -59,8 +59,21 @@ export const blockchainAPI = {
 };
 
 export const vendorAPI = {
-    getProfile: () => api.get('/vendors/profile'),
-    updateProfile: (data) => api.put('/vendors/profile', data),
+    register: (data) => api.post('/vendors/register', data),
+    getProfile: (email) => api.get(`/vendors/${email}`),
+    getAll: () => api.get('/vendors'),
+    rate: (data) => api.post('/vendors/rate', data),
+    blacklist: (vendorEmail, reason) => api.post('/vendors/blacklist', { vendorEmail, reason }),
+    checkBlacklist: (vendorEmail) => api.get(`/vendors/blacklist/${vendorEmail}`),
+};
+
+export const paymentAPI = {
+    create: (data) => api.post('/payments/create', data),
+    recordMilestone: (data) => api.post('/payments/milestone', data),
+    getByContract: (contractId) => api.get(`/payments/contract/${contractId}`),
+    getByVendor: (vendorEmail) => api.get(`/payments/vendor/${vendorEmail}`),
+    getAll: () => api.get('/payments/all'),
+    getMilestones: (contractId) => api.get(`/payments/milestones/${contractId}`),
 };
 
 export const auditAPI = {
