@@ -116,8 +116,8 @@ function GovernmentTab({ user }) {
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2>🏛️ Government Dashboard</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <h2>Government Dashboard</h2>
                 <button onClick={() => setShowCreateForm(!showCreateForm)} className="btn-secondary">
                     {showCreateForm ? 'Cancel' : '+ Create Tender'}
                 </button>
@@ -128,7 +128,7 @@ function GovernmentTab({ user }) {
             )}
 
             {showCreateForm && (
-                <div className="card">
+                <div className="card glass-card">
                     <h3>Create New Tender</h3>
                     <form onSubmit={handleCreateTender}>
                         <div className="form-group">
@@ -151,24 +151,26 @@ function GovernmentTab({ user }) {
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label>Budget (₹) *</label>
-                            <input
-                                type="number"
-                                value={formData.budget}
-                                onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                                required
-                            />
-                        </div>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Budget (₹) *</label>
+                                <input
+                                    type="number"
+                                    value={formData.budget}
+                                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                                    required
+                                />
+                            </div>
 
-                        <div className="form-group">
-                            <label>Deadline *</label>
-                            <input
-                                type="date"
-                                value={formData.deadline}
-                                onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                                required
-                            />
+                            <div className="form-group">
+                                <label>Deadline *</label>
+                                <input
+                                    type="date"
+                                    value={formData.deadline}
+                                    onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                                    required
+                                />
+                            </div>
                         </div>
 
                         <div className="form-group">
@@ -202,9 +204,11 @@ function GovernmentTab({ user }) {
                             }}
                         />
 
-                        <button type="submit" className="btn-primary" disabled={loading}>
-                            {loading ? 'Creating...' : 'Create Tender'}
-                        </button>
+                        <div className="form-actions">
+                            <button type="submit" className="btn-primary" disabled={loading}>
+                                {loading ? 'Creating...' : 'Create Tender'}
+                            </button>
+                        </div>
                     </form>
                 </div>
             )}
@@ -215,34 +219,32 @@ function GovernmentTab({ user }) {
                         ← Back to Tenders
                     </button>
 
-                    <div className="card">
-                        <h3>{selectedTender.title}</h3>
-                        <p><strong>Budget:</strong> ₹{selectedTender.budget.toLocaleString()}</p>
-                        <p><strong>Deadline:</strong> {selectedTender.deadline}</p>
-                        <p><strong>Bids Received:</strong> {bids.length}</p>
+                    <div className="card glass-card" style={{ marginBottom: '2rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '1rem' }}>
+                            <div>
+                                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{selectedTender.title}</h3>
+                                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                                    <span className="badge medium">Budget: ₹{selectedTender.budget.toLocaleString()}</span>
+                                    <span className="badge closed">Deadline: {selectedTender.deadline}</span>
+                                    <span className="badge open">Bids: {bids.length}</span>
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Audit Status Display */}
                         {auditStatus && (
-                            <div style={{
-                                marginTop: '1rem',
-                                padding: '1rem',
-                                background: auditStatus.submitted ? '#D1FAE5' : '#FEF3C7',
-                                borderRadius: '0.5rem',
-                                border: `2px solid ${auditStatus.submitted ? '#10B981' : '#F59E0B'}`
-                            }}>
-                                <p style={{ margin: 0, fontWeight: '600', color: auditStatus.submitted ? '#065F46' : '#92400E' }}>
-                                    {auditStatus.submitted ? '✅ Audit Review Completed' : '⏳ Awaiting Auditor Review'}
-                                </p>
-                                {auditStatus.submitted && (
-                                    <>
-                                        <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.875rem', color: '#047857' }}>
-                                            Reviewed by {auditStatus.submittedBy} on {new Date(auditStatus.submittedAt).toLocaleString()}
-                                        </p>
-                                        <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.875rem', color: '#047857' }}>
-                                            Approved Bids: {auditStatus.approvedBids} | Flagged Bids: {auditStatus.flaggedBids}
-                                        </p>
-                                    </>
-                                )}
+                            <div className={`alert ${auditStatus.submitted ? 'success' : 'warning'}`} style={{ marginTop: '1.5rem', marginBottom: 0 }}>
+                                <div>
+                                    <p style={{ margin: 0, fontWeight: '700' }}>
+                                        {auditStatus.submitted ? 'Audit Review Completed' : 'Awaiting Auditor Review'}
+                                    </p>
+                                    {auditStatus.submitted && (
+                                        <div style={{ fontSize: '0.85rem', marginTop: '0.25rem', opacity: 0.9 }}>
+                                            <p style={{ marginBottom: '0.1rem' }}>Reviewed by {auditStatus.submittedBy} on {new Date(auditStatus.submittedAt).toLocaleString()}</p>
+                                            <p style={{ marginBottom: 0 }}>Approved Bids: {auditStatus.approvedBids} | Flagged Bids: {auditStatus.flaggedBids}</p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>
@@ -252,89 +254,64 @@ function GovernmentTab({ user }) {
                             <BidChart bids={bids} />
 
                             <h3 style={{ marginTop: '30px', marginBottom: '15px' }}>Submitted Bids</h3>
-                            {bids.map((bid) => (
-                                <div key={bid.id} className="card">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                                        <div>
-                                            <h4>{bid.vendorName}</h4>
-                                            <p><strong>Amount:</strong> ₹{bid.amount.toLocaleString()}</p>
-                                            <p><strong>Timeline:</strong> {bid.timeline}</p>
-                                            <p><strong>Proposal:</strong> {bid.proposal}</p>
-                                            <p style={{ fontSize: '12px', color: '#666' }}>
-                                                Block #{bid.blockIndex} | Hash: {bid.blockHash.substring(0, 16)}...
-                                            </p>
-                                        </div>
-
-                                        {/* Check if this bid has been awarded */}
-                                        {(() => {
-                                            const awardedContract = contracts.find(c => c.bidId === bid.id);
-
-                                            if (awardedContract) {
-                                                // Show awarded status
-                                                return (
-                                                    <div style={{
-                                                        padding: '1rem',
-                                                        background: '#D1FAE5',
-                                                        borderRadius: '0.5rem',
-                                                        border: '2px solid #10B981',
-                                                        maxWidth: '250px'
-                                                    }}>
-                                                        <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '700', color: '#065F46' }}>
-                                                            🏆 CONTRACT AWARDED
-                                                        </p>
-                                                        <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', color: '#047857' }}>
-                                                            Awarded on {new Date(awardedContract.awardedAt).toLocaleDateString()}
-                                                        </p>
-                                                    </div>
-                                                );
-                                            }
-
-
-                                            // Show Award button for APPROVED bids only
-                                            const bidFlagStatus = auditStatus?.bidFlags?.[bid.id];
-                                            if (auditStatus?.submitted && bidFlagStatus === 'APPROVED') {
-                                                return (
-                                                    <button onClick={() => awardContract(bid)} className="btn-success">
-                                                        Award Contract
-                                                    </button>
-                                                );
-                                            }
-
-
-                                            // Display status badge based on bid flag
-
-                                            return (
-                                                <div style={{
-                                                    padding: '0.75rem 1rem',
-                                                    background: bidFlagStatus === 'FLAGGED' ? '#FEF3C7' :
-                                                        bidFlagStatus === 'APPROVED' ? '#D1FAE5' : '#F3F4F6',
-                                                    borderRadius: '0.5rem',
-                                                    border: `2px solid ${bidFlagStatus === 'FLAGGED' ? '#F59E0B' :
-                                                        bidFlagStatus === 'APPROVED' ? '#10B981' : '#D1D5DB'}`,
-                                                    textAlign: 'center',
-                                                    maxWidth: '200px'
-                                                }}>
-                                                    <p style={{
-                                                        margin: 0,
-                                                        fontSize: '0.875rem',
-                                                        fontWeight: '600',
-                                                        color: bidFlagStatus === 'FLAGGED' ? '#92400E' :
-                                                            bidFlagStatus === 'APPROVED' ? '#065F46' : '#4B5563'
-                                                    }}>
-                                                        {!auditStatus?.submitted
-                                                            ? '⏳ Awaiting Audit Review'
-                                                            : bidFlagStatus === 'FLAGGED'
-                                                                ? '⚠️ Flagged by Auditor'
-                                                                : bidFlagStatus === 'APPROVED'
-                                                                    ? '✅ Approved by Auditor'
-                                                                    : '⏳ Not Reviewed'}
-                                                    </p>
+                            <div className="grid">
+                                {bids.map((bid) => (
+                                    <div key={bid.id} className="card">
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexDirection: 'column', height: '100%' }}>
+                                            <div style={{ width: '100%' }}>
+                                                <h4>{bid.vendorName}</h4>
+                                                <div style={{ margin: '1rem 0' }}>
+                                                    <p><strong>Amount:</strong> <span style={{ fontSize: '1.2rem', color: 'var(--primary)', fontWeight: '700' }}>₹{bid.amount.toLocaleString()}</span></p>
+                                                    <p><strong>Timeline:</strong> {bid.timeline}</p>
+                                                    <p><strong>Proposal:</strong> {bid.proposal}</p>
                                                 </div>
-                                            );
-                                        })()}
+                                                <div className="block-hash" style={{ fontSize: '0.7rem' }}>
+                                                    Block #{bid.blockIndex} | Hash: {bid.blockHash.substring(0, 16)}...
+                                                </div>
+                                            </div>
+
+                                            <div style={{ marginTop: '1.5rem', width: '100%' }}>
+                                                {(() => {
+                                                    const awardedContract = contracts.find(c => c.bidId === bid.id);
+
+                                                    if (awardedContract) {
+                                                        return (
+                                                            <div className="alert success" style={{ padding: '0.75rem', marginBottom: 0 }}>
+                                                                <div>
+                                                                    <p style={{ fontWeight: '700', margin: 0 }}>🏆 CONTRACT AWARDED</p>
+                                                                    <p style={{ fontSize: '0.75rem', margin: '0.25rem 0 0 0' }}>Awarded on {new Date(awardedContract.awardedAt).toLocaleDateString()}</p>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    }
+
+                                                    const bidFlagStatus = auditStatus?.bidFlags?.[bid.id];
+
+                                                    if (auditStatus?.submitted && bidFlagStatus === 'APPROVED') {
+                                                        return (
+                                                            <button onClick={() => awardContract(bid)} className="btn-success" style={{ width: '100%' }}>
+                                                                Check & Award Contract
+                                                            </button>
+                                                        );
+                                                    }
+
+                                                    return (
+                                                        <div className={`badge ${!auditStatus?.submitted ? 'closed' : bidFlagStatus === 'FLAGGED' ? 'high' : bidFlagStatus === 'APPROVED' ? 'open' : 'closed'}`} style={{ width: '100%', justifyContent: 'center', padding: '0.75rem' }}>
+                                                            {!auditStatus?.submitted
+                                                                ? '⏳ Awaiting Audit Review'
+                                                                : bidFlagStatus === 'FLAGGED'
+                                                                    ? '⚠️ Flagged by Auditor'
+                                                                    : bidFlagStatus === 'APPROVED'
+                                                                        ? '✅ Approved by Auditor'
+                                                                        : '⏳ Not Reviewed'}
+                                                        </div>
+                                                    );
+                                                })()}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </>
                     )}
 
@@ -346,46 +323,47 @@ function GovernmentTab({ user }) {
                 </div>
             ) : (
                 <>
-                    <h3 style={{ marginBottom: '15px' }}>Active Tenders</h3>
-                    {tenders.map((tender) => (
-                        <div key={tender.id} className="card">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                                <div>
-                                    <h3>
-                                        {tender.title}
-                                        <span className={`badge ${tender.status.toLowerCase()}`}>{tender.status}</span>
-                                    </h3>
-                                    <p>{tender.description}</p>
-                                    {tender.fileUrl && (
-                                        <p style={{ marginTop: '0.5rem' }}>
+                    <div className="grid">
+                        {tenders.map((tender) => (
+                            <div key={tender.id} className="card">
+                                <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+                                    <div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                                            <h3 style={{ margin: 0 }}>{tender.title}</h3>
+                                            <span className={`badge ${tender.status.toLowerCase()}`}>{tender.status}</span>
+                                        </div>
+
+                                        <p style={{ minHeight: '3rem' }}>{tender.description}</p>
+
+                                        <div style={{ background: '#F9FAFB', padding: '1rem', borderRadius: '8px', margin: '1rem 0' }}>
+                                            <p style={{ marginBottom: '0.5rem' }}><strong>Budget:</strong> ₹{tender.budget.toLocaleString()}</p>
+                                            <p style={{ marginBottom: 0 }}><strong>Deadline:</strong> {tender.deadline}</p>
+                                        </div>
+
+                                        {tender.fileUrl && (
                                             <a
                                                 href={tender.fileUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                style={{
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    color: '#2563EB',
-                                                    textDecoration: 'none',
-                                                    fontWeight: '500'
-                                                }}
+                                                className="btn-secondary"
+                                                style={{ display: 'inline-block', padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginBottom: '1rem' }}
                                             >
-                                                📄 View Tender Document ({tender.fileName})
+                                                📄 View Tender Doc
                                             </a>
-                                        </p>
-                                    )}
-                                    <p><strong>Budget:</strong> ₹{tender.budget.toLocaleString()}</p>
-                                    <p><strong>Deadline:</strong> {tender.deadline}</p>
-                                    <p style={{ fontSize: '12px', color: '#666' }}>
-                                        Block #{tender.blockIndex} | Hash: {tender.blockHash.substring(0, 16)}...
-                                    </p>
+                                        )}
+
+                                        <div className="block-hash" style={{ fontSize: '0.7rem' }}>
+                                            Block #{tender.blockIndex}
+                                        </div>
+                                    </div>
+
+                                    <button onClick={() => viewBids(tender)} className="btn-secondary" style={{ marginTop: '1rem', width: '100%' }}>
+                                        View Bids & Manage
+                                    </button>
                                 </div>
-                                <button onClick={() => viewBids(tender)} className="btn-secondary">
-                                    View Bids
-                                </button>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
 
                     {tenders.length === 0 && (
                         <div className="empty-state">
